@@ -43,10 +43,7 @@ int main(int argc, char *argv[] ) {// arg count, arg vector
    server.sin_addr.s_addr = ip;
    server.sin_port        = htons(PORT_NO);
    
-   /* User interface */
-   printf(" Message: ");
-   scanf("%s",buffer);
-   bytes = strlen(buffer)+1;
+   
 
    /* Creating socket */
    fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -65,6 +62,13 @@ int main(int argc, char *argv[] ) {// arg count, arg vector
       error("%s: Cannot connect to the server.\n", argv[0]);
       exit(2);
    }
+	
+	while(1){
+
+   /* Üzenet bekérése */
+   printf("Message: ");
+   scanf("%s",buffer);
+   bytes = strlen(buffer)+1;
 
    /* Sending data to the server */
    trnmsize = send(fd, buffer, bytes, flags);
@@ -73,8 +77,10 @@ int main(int argc, char *argv[] ) {// arg count, arg vector
       exit(3);
    }
 
+	if(strcmp(buffer, "feladom")) break;
+
    /* User interface */
-   printf("%i bytes have been sent to server.\n", trnmsize-1);
+   //printf("%i bytes have been sent to server.\n", trnmsize-1);
 
    /* Receive data from the server */
    rcvsize = recv( fd, buffer, bytes, flags );
@@ -88,6 +94,8 @@ int main(int argc, char *argv[] ) {// arg count, arg vector
       printf("Acknowledgement has been received from server.\n");
    else
       printf("Acknowledgement error.");
+
+	}
 
    /* Closing sockets and quit */
    close(fd);

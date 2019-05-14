@@ -6,8 +6,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <netinet/in.h> 
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define BUFSIZE 1024                      // buffer size
 #define PORT_NO 2001                      // port number
@@ -46,7 +48,7 @@ int main(int argc, char *argv[] ){ 	// arg count, arg vector
       error("%s: Socket creation error\n",argv[0]);
       exit(1);
       }
-printf("socket megvan\n");
+
    /* Setting socket options */
    setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof on);
    setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE, (char *)&on, sizeof on);
@@ -57,14 +59,13 @@ printf("socket megvan\n");
       error("%s: Cannot bind to the socket\n",argv[0]);
       exit(2);
       }
-printf("binding megvolt\n");
+
    /* Listening */
    err = listen(fd, 10);
    if (err < 0) {
       error("%s: Cannot listen to the socket\n",argv[0]);
       exit(3);
       }
-printf("listen\n");
 
 
    /* Accepting connection request */
@@ -73,7 +74,11 @@ printf("listen\n");
       error("%s: Cannot accept on socket\n",argv[0]);
       exit(4);
       }
-printf("accept\n");
+   //printf("%s connected.\n",inet_ntoa(fdc.sin_addr));
+
+while(1){
+
+	printf("Waiting for message...\n");
    /* Receiving data from the client */
    rcvsize = recv( fdc, buffer, bytes, flags );
    if (rcvsize < 0) {
@@ -81,9 +86,8 @@ printf("accept\n");
       exit(5);
       }
 
-   /* User interface */
-   printf("%i bytes have been received from client.\n Message: %s \n", 
-           rcvsize-1, buffer);
+   /* Beérkezett üzenetet kiírja */
+   printf("Kliens: %s \n", buffer);
 
    /* Sending acknowledgement to the client */
    sprintf(buffer,"Transmit is OK.");
@@ -94,8 +98,10 @@ printf("accept\n");
       exit(6);
       }
 
-   /* User interface */
+   /* Visszaigazolás elküldve */
    printf ("Acknowledgement has been sent to the client.\n");
+   
+   }
 
    /* Closing sockets and quit */
    close(fdc);
