@@ -14,6 +14,8 @@
 #define PORT_NO 2001
 #define error(a,b) fprintf(stderr, a, b)
 
+
+
 int main(int argc, char *argv[] ) {// arg count, arg vector   
 
    /* Declarations */
@@ -31,6 +33,12 @@ int main(int argc, char *argv[] ) {// arg count, arg vector
    char on;                        // 
    char buffer[BUFSIZE+1];         // datagram dat buffer area
    char server_addr[16];           // server address	
+
+void bezaras()
+{
+close(fd);
+exit(0);
+}
 
    /* Initialization */
    on    = 1;
@@ -63,41 +71,58 @@ int main(int argc, char *argv[] ) {// arg count, arg vector
       exit(2);
    }
 	
-	while(1){
+	for(;;){
+
+
+	bytes=BUFSIZE;
+	/* várás a szerverre accept utan  */
+      //printf("Waiting for other player\n");
+   	rcvsize = recv( fd, buffer, bytes, flags );
+      bytes=rcvsize;
+      printf("recieve utan: %s %d\n", buffer,bytes);
+   	if (rcvsize < 0) {
+      	error("%s: Cannot receive data from the socket.\n", 		argv[0]);
+      	exit(4);
+	                    }
+                       
+if (strcmp(buffer,"mehet")==0) printf("Te jossz!\n");
+   	else printf("data error: %s %d\n", buffer,bytes);
+
 
    /* Üzenet bekérése */
    printf("Message: ");
    scanf("%s",buffer);
-   bytes = strlen(buffer)+1;
+   bytes = strlen(buffer);
 
    /* Sending data to the server */
    trnmsize = send(fd, buffer, bytes, flags);
    if (trnmsize < 0) {
       error("%s: Cannot send data to server.\n", argv[0]);
       exit(3);
-   }
+                     }
 
-	if(strcmp(buffer, "feladom")) break;
+	if((strcmp(buffer, "feladom"))==0) bezaras();
 
    /* User interface */
    //printf("%i bytes have been sent to server.\n", trnmsize-1);
 
-   /* Receive data from the server */
+   /* Receive data from the server 
+
    rcvsize = recv( fd, buffer, bytes, flags );
    if (rcvsize < 0) {
       error("%s: Cannot receive data from the socket.\n", argv[0]);
       exit(4);
    }
-
-   /* User interface */
+*/
+   /* User interface 
    if (strcmp(buffer, "Transmit is OK."))
       printf("Acknowledgement has been received from server.\n");
    else
       printf("Acknowledgement error.");
+*/
+}
 
-	}
-
-   /* Closing sockets and quit */
+   /* Closing sockets and quit 
    close(fd);
-   exit(0);
+   exit(0);*/
 } 
